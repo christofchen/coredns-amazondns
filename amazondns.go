@@ -168,7 +168,7 @@ func resolveCNAME(reqName string, res *dns.Msg) {
 		for _, rr := range res.Answer {
 			if rr.Header().Name == cname {
 				rr.Header().Name = name
-				rr.Header().Ttl = ttl
+				rr.Header().Ttl = min(ttl, rr.Header().Ttl)
 				replaced = true
 			}
 		}
@@ -184,3 +184,11 @@ func resolveCNAME(reqName string, res *dns.Msg) {
 
 // Name implements the Handler interface.
 func (ad AmazonDNS) Name() string { return "amazondns" }
+
+
+func min(a, b uint32) uint32 {
+    if a < b {
+        return a
+    }
+    return b
+}

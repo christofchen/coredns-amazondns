@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"fmt"
 
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
-	"github.com/coredns/coredns/plugin/pkg/dnsutil"
 
 	"github.com/mholt/caddy"
 	"github.com/miekg/dns"
@@ -97,7 +97,7 @@ func setup(c *caddy.Controller) error {
 				return err
 			}
 		}
-		dnsAddr, err = dnsutil.ParseHostPort(dnsAddr, "53")
+		dnsAddr, err = ParseHostPort(dnsAddr, "53")
 		if err != nil {
 			return err
 		}
@@ -166,4 +166,24 @@ func resolveAmazonDNS() (string, error) {
 	ip[3] += 2
 
 	return ip.String(), nil
+}
+
+// ParseHostPort will check if the host part is a valid IP address, if the
+// IP address is valid, but no port is found, defaultPort is added.
+func ParseHostPort(s, defaultPort string) (string, error) {
+	addr, port, err := net.SplitHostPort(s)
+	if port == "" {
+		port = defaultPort
+	}
+	if err != nil {
+		if net.ParseIP(s) == nil {
+			return "", fmt.Errorf("must specify an IP address: `%s'", s)
+		}
+		return net.JoinHostPort(s, port), nil
+	}
+
+	if net.ParseIP(addr) == nil {
+		return "", fmt.Errorf("must specify an IP address: `%s'", addr)
+	}
+	return net.JoinHostPort(addr, port), nil
 }

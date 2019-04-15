@@ -98,7 +98,7 @@ L:
 	}
 
 	state.SizeAndDo(m)
-	m, _ = state.Scrub(m)
+	m = state.Scrub(m)
 
 	w.WriteMsg(m)
 	return dns.RcodeSuccess, nil
@@ -185,10 +185,9 @@ func resolveCNAME(reqName string, res *dns.Msg) {
 // Name implements the Handler interface.
 func (ad AmazonDNS) Name() string { return "amazondns" }
 
-
 func min(a, b uint32) uint32 {
-    if a < b {
-        return a
-    }
-    return b
+	if a < b {
+		return a
+	}
+	return b
 }

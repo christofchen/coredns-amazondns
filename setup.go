@@ -1,13 +1,13 @@
 package amazondns
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"strings"
 	"time"
-	"fmt"
 
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
@@ -104,13 +104,13 @@ func setup(c *caddy.Controller) error {
 
 		// Required check
 		if soa == nil {
-			return c.Errf("'soa' property requires")
+			return c.Errf("'soa' property required")
 		}
 		if ns == nil {
-			return c.Errf("'ns' property requires")
+			return c.Errf("'ns' property required")
 		}
 		if nsa == nil {
-			return c.Errf("'nsa' property requires")
+			return c.Errf("'nsa' property required")
 		}
 
 		ad.zones = append(ad.zones, key)
